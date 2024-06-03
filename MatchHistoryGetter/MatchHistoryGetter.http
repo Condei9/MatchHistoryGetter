@@ -1,0 +1,6 @@
+@MatchHistoryGetter_HostAddress = http://localhost:5287
+
+GET {{MatchHistoryGetter_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
