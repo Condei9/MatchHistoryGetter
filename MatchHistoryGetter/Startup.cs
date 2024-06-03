@@ -1,4 +1,5 @@
-﻿using MatchHistoryGetter.Services;
+﻿using MatchHistoryGetter.Controllers;
+using MatchHistoryGetter.Services;
 
 namespace MatchHistoryGetter
 {
@@ -7,6 +8,7 @@ namespace MatchHistoryGetter
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddHttpClient<IRiotApiService, RiotApiService>();
+            services.AddTransient<MatchHistoryController>();
         }
     }
 }

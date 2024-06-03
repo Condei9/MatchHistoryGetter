@@ -1,25 +1,33 @@
-var builder = WebApplication.CreateBuilder(args);
+using System;
+using System.Threading.Tasks;
+using MatchHistoryGetter.Controllers;
+using MatchHistoryGetter;
+using Microsoft.Extensions.DependencyInjection;
 
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+namespace MatchHistoryGetter
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            var serviceCollection = new ServiceCollection();
+
+            var startup = new Startup();
+            startup.ConfigureServices(serviceCollection);
+
+            var serviceProvider = serviceCollection.BuildServiceProvider();
+            var matchHistoryController = serviceProvider.GetService<MatchHistoryController>();
+
+            Console.WriteLine("Name:");
+            var summonerName = Console.ReadLine();
+
+            Console.WriteLine("Tagline:");
+            var tagLine = Console.ReadLine();
+
+            if (matchHistoryController != null)
+            {
+                matchHistoryController.GetMatchHistory(summonerName, tagLine);
+            }
+        }
+    }
 }
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();

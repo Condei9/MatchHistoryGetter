@@ -13,7 +13,7 @@ namespace MatchHistoryGetter.Services
 
         public Task<List<MatchModel>> GetMatchHistoryAsync(string summonerName, string tagLine)
         {
-            throw new NotImplementedException();
+            return null;
         }
     }
 }

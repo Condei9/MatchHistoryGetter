@@ -11,9 +11,16 @@ namespace MatchHistoryGetter.Controllers
             _riotApiService = riotService;
         }
 
-        public void GetMatchHistory(string summonerName, string tagLine)
+        public async Task GetMatchHistory(string summonerName, string tagLine)
         {
-            Console.WriteLine($"not yet implemented for {summonerName}#{tagLine}");
+            try
+            {
+                var matches = await _riotApiService.GetMatchHistoryAsync(summonerName, tagLine);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine($"not yet implemented for {summonerName}#{tagLine}");
+            }
         }
     }
 }
