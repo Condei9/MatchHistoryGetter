@@ -11,7 +11,7 @@ namespace MatchHistoryGetter.Services
     public class RiotApiService : IRiotApiService
     {
         private readonly HttpClient _httpClient;
-        private const string ApiKey = "RGAPI-2c94524e-8fea-4d14-a93d-35927c8d9f85";
+        private const string ApiKey = "";
         private const string MatchBaseUrl = "https://europe.api.riotgames.com/lol/match/v5/matches";
         private const string SummonerBaseUrl = "https://europe.api.riotgames.com/riot/account/v1/accounts/by-riot-id";
 
@@ -29,7 +29,12 @@ namespace MatchHistoryGetter.Services
             long startTimeUnix = new DateTimeOffset(startTime7Days).ToUnixTimeSeconds();
             long endTimeUnix = new DateTimeOffset(endTime).ToUnixTimeSeconds();
 
-            string summonerPuuId = GetSummonerPuuId(summonerName, tagLine).Result;
+            var summonerPuuId = GetSummonerPuuId(summonerName, tagLine).Result;
+
+            if (summonerPuuId == null)
+            {
+                return new List<MatchModel>();
+            }
 
             var matchHistoryResponse = await _httpClient.GetStringAsync($"{MatchBaseUrl}/by-puuid/{summonerPuuId}/ids?startTime={startTimeUnix}&endTime={endTimeUnix}&count=100");
             var matchHistory = JsonConvert.DeserializeObject<dynamic>(matchHistoryResponse);
@@ -74,7 +79,18 @@ namespace MatchHistoryGetter.Services
             
             var encodedName = HttpUtility.UrlEncode(utf8Bytes);
             var baseAddress = $"{SummonerBaseUrl}/{encodedName}/{tagLine}";
-            var summonerResponse = await _httpClient.GetStringAsync(baseAddress);
+            string summonerResponse = "";
+
+            try
+            {
+                summonerResponse = await _httpClient.GetStringAsync(baseAddress);
+            }
+            catch(Exception)
+            {
+                Console.WriteLine("\nUser Not Found!");
+                return string.Empty;
+            }
+            
             var summoner = JsonConvert.DeserializeObject<dynamic>(summonerResponse);
 
             return summoner.puuid;
