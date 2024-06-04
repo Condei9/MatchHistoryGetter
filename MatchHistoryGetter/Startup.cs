@@ -9,6 +9,10 @@ namespace MatchHistoryGetter
         {
             services.AddHttpClient<IRiotApiService, RiotApiService>();
             services.AddTransient<MatchHistoryController>();
+
+            var configuration = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json")
+            .Build();
         }
     }
 }

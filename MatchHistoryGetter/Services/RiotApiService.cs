@@ -3,28 +3,35 @@ using Newtonsoft.Json;
 using System.Security.Cryptography.Xml;
 using System.Text.RegularExpressions;
 using System.Linq;
+using System.Web;
+using System.Text;
 
 namespace MatchHistoryGetter.Services
 {
     public class RiotApiService : IRiotApiService
     {
         private readonly HttpClient _httpClient;
-        private const string ApiKey = "RGAPI-4f6a4c3b-02bf-432f-85a8-0c9719add5e5";
+        private const string ApiKey = "RGAPI-2c94524e-8fea-4d14-a93d-35927c8d9f85";
         private const string MatchBaseUrl = "https://europe.api.riotgames.com/lol/match/v5/matches";
         private const string SummonerBaseUrl = "https://europe.api.riotgames.com/riot/account/v1/accounts/by-riot-id";
 
         public RiotApiService(HttpClient httpClient)
         {
             _httpClient = httpClient;
+            _httpClient.DefaultRequestHeaders.Add("X-Riot-Token", ApiKey);
         }
 
         public async Task<List<MatchModel>> GetMatchHistoryAsync(string summonerName, string tagLine)
         {
-            _httpClient.DefaultRequestHeaders.Add("X-Riot-Token", ApiKey);
+            var endTime = DateTime.UtcNow;
+            var startTime7Days = endTime.AddDays(-7);
+
+            long startTimeUnix = new DateTimeOffset(startTime7Days).ToUnixTimeSeconds();
+            long endTimeUnix = new DateTimeOffset(endTime).ToUnixTimeSeconds();
 
             string summonerPuuId = GetSummonerPuuId(summonerName, tagLine).Result;
 
-            var matchHistoryResponse = await _httpClient.GetStringAsync($"{MatchBaseUrl}/by-puuid/{summonerPuuId}/ids?start=0&count=20");
+            var matchHistoryResponse = await _httpClient.GetStringAsync($"{MatchBaseUrl}/by-puuid/{summonerPuuId}/ids?startTime={startTimeUnix}&endTime={endTimeUnix}&count=100");
             var matchHistory = JsonConvert.DeserializeObject<dynamic>(matchHistoryResponse);
 
             var matches = new List<MatchModel>();
@@ -63,7 +70,10 @@ namespace MatchHistoryGetter.Services
 
         public async Task<string> GetSummonerPuuId(string summonerName, string tagLine)
         {
-            var baseAddress = new Uri($"{SummonerBaseUrl}/{summonerName}/{tagLine}");
+            byte[] utf8Bytes = Encoding.UTF8.GetBytes(summonerName);
+            
+            var encodedName = HttpUtility.UrlEncode(utf8Bytes);
+            var baseAddress = $"{SummonerBaseUrl}/{encodedName}/{tagLine}";
             var summonerResponse = await _httpClient.GetStringAsync(baseAddress);
             var summoner = JsonConvert.DeserializeObject<dynamic>(summonerResponse);
 

@@ -7,5 +7,6 @@
         public int Deaths { get; set; }
         public int Kills { get; set; }
         public string Puuid { get; set; }
+        public bool Win {  get; set; }
     }
 }

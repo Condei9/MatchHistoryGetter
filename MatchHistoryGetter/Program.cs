@@ -17,16 +17,19 @@ namespace MatchHistoryGetter
 
             var serviceProvider = serviceCollection.BuildServiceProvider();
             var matchHistoryController = serviceProvider.GetService<MatchHistoryController>();
-
-            Console.WriteLine("Name:");
-            var summonerName = Console.ReadLine();
-
-            Console.WriteLine("Tagline:");
-            var tagLine = Console.ReadLine();
-
-            if (matchHistoryController != null)
+            while(true)
             {
-                await matchHistoryController.GetMatchHistory(summonerName, tagLine);
+                Console.WriteLine("League Of Legends Stat Checker --------------------------------\n");
+                Console.WriteLine("Input Name:");
+                var summonerName = Console.ReadLine();
+
+                Console.WriteLine("Input Tagline:");
+                var tagLine = Console.ReadLine();
+
+                if (matchHistoryController != null)
+                {
+                    await matchHistoryController.GetStatsAndMatchHistory(summonerName, tagLine);
+                }
             }
         }
     }
