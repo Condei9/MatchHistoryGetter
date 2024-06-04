@@ -8,7 +8,7 @@ namespace MatchHistoryGetter
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             var serviceCollection = new ServiceCollection();
 
@@ -26,7 +26,7 @@ namespace MatchHistoryGetter
 
             if (matchHistoryController != null)
             {
-                matchHistoryController.GetMatchHistory(summonerName, tagLine);
+                await matchHistoryController.GetMatchHistory(summonerName, tagLine);
             }
         }
     }

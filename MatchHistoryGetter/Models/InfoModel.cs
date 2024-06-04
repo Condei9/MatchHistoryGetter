@@ -15,6 +15,7 @@
         public int MapId { get; set; }
         public string PlatformId { get; set; }
         public int QueueId { get; set; }
+        public List<ParticipantModel> Participants { get; set; } = new List<ParticipantModel>();
         public string TournamentCode { get; set; }
     }
 }

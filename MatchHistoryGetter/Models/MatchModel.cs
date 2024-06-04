@@ -4,7 +4,7 @@ namespace MatchHistoryGetter.Models
 {
     public class MatchModel
     {
-        public MetadataModel Metadata {  get; set; }
-        public InfoModel Info { get; set; }
+        public MetadataModel MetadataInfo {  get; set; } = new MetadataModel();
+        public InfoModel MatchInfo { get; set; } = new InfoModel();
     }
 }
